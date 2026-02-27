@@ -293,15 +293,26 @@ document.addEventListener('DOMContentLoaded', function () {
     function populateFilters(suppliers) {
         var cityFilter = document.getElementById('filterCity');
         var activityFilter = document.getElementById('filterActivity');
+        var classFilter = document.getElementById('filterClassification');
+        var turnoverFilter = document.getElementById('filterTurnover');
+        var accreditFilter = document.getElementById('filterAccreditation');
         if (!cityFilter || !activityFilter) return;
 
         var cities = {};
         var activities = {};
+        var classifications = {};
+        var turnovers = {};
+        var accreditations = {};
 
         suppliers.forEach(function (s) {
             if (s.City) cities[s.City] = true;
             if (Array.isArray(s.Activities)) {
                 s.Activities.forEach(function (a) { activities[a] = true; });
+            }
+            if (s.Contractor_Classification) classifications[s.Contractor_Classification] = true;
+            if (s.Annual_Turnover) turnovers[s.Annual_Turnover] = true;
+            if (Array.isArray(s.Accreditations)) {
+                s.Accreditations.forEach(function (a) { accreditations[a] = true; });
             }
         });
 
@@ -319,6 +330,33 @@ document.addEventListener('DOMContentLoaded', function () {
             activityFilter.innerHTML += '<option value="' + escapeHtml(a) + '">' + escapeHtml(a) + '</option>';
         });
         activityFilter.value = currentActivity;
+
+        if (classFilter) {
+            var currentClass = classFilter.value;
+            classFilter.innerHTML = '<option value="">كل التصنيفات</option>';
+            Object.keys(classifications).sort().forEach(function (c) {
+                classFilter.innerHTML += '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>';
+            });
+            classFilter.value = currentClass;
+        }
+
+        if (turnoverFilter) {
+            var currentTurnover = turnoverFilter.value;
+            turnoverFilter.innerHTML = '<option value="">كل القدرات المالية</option>';
+            Object.keys(turnovers).sort().forEach(function (t) {
+                turnoverFilter.innerHTML += '<option value="' + escapeHtml(t) + '">' + escapeHtml(t) + '</option>';
+            });
+            turnoverFilter.value = currentTurnover;
+        }
+
+        if (accreditFilter) {
+            var currentAccredit = accreditFilter.value;
+            accreditFilter.innerHTML = '<option value="">كل الاعتمادات</option>';
+            Object.keys(accreditations).sort().forEach(function (a) {
+                accreditFilter.innerHTML += '<option value="' + escapeHtml(a) + '">' + escapeHtml(a) + '</option>';
+            });
+            accreditFilter.value = currentAccredit;
+        }
     }
 
     function applyFilters(suppliers) {
@@ -326,6 +364,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var city = (document.getElementById('filterCity') || {}).value || '';
         var activity = (document.getElementById('filterActivity') || {}).value || '';
         var status = (document.getElementById('filterStatus') || {}).value || '';
+        var classification = (document.getElementById('filterClassification') || {}).value || '';
+        var turnover = (document.getElementById('filterTurnover') || {}).value || '';
+        var equipment = (document.getElementById('filterEquipment') || {}).value || '';
+        var accreditation = (document.getElementById('filterAccreditation') || {}).value || '';
 
         return suppliers.filter(function (s) {
             if (search) {
@@ -338,12 +380,18 @@ document.addEventListener('DOMContentLoaded', function () {
             if (city && s.City !== city) return false;
             if (activity && Array.isArray(s.Activities) && s.Activities.indexOf(activity) < 0) return false;
             if (status && s.Approval_Status !== status) return false;
+            if (classification && s.Contractor_Classification !== classification) return false;
+            if (turnover && s.Annual_Turnover !== turnover) return false;
+            if (equipment && s.Has_Equipment !== equipment) return false;
+            if (accreditation) {
+                if (!Array.isArray(s.Accreditations) || s.Accreditations.indexOf(accreditation) < 0) return false;
+            }
             return true;
         });
     }
 
     // Filter events
-    ['searchInput', 'filterCity', 'filterActivity', 'filterStatus'].forEach(function (id) {
+    ['searchInput', 'filterCity', 'filterActivity', 'filterStatus', 'filterClassification', 'filterTurnover', 'filterEquipment', 'filterAccreditation'].forEach(function (id) {
         var el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', function () { loadData(); });
