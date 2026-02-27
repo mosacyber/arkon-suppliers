@@ -10,7 +10,10 @@ const PORT = process.env.PORT || 3000;
 var dbUrl = process.env.DATABASE_URL || 'postgresql://admin:KxCOdWFB6D8ijLC9UBD2k1HTFCSlQngd@chalet-db-pugmli:5432/chalet_db';
 var pool = new Pool({
     connectionString: dbUrl,
-    ssl: false
+    ssl: false,
+    max: 3,
+    idleTimeoutMillis: 0,
+    connectionTimeoutMillis: 10000
 });
 
 // Middleware
@@ -39,7 +42,7 @@ async function initDB(retries) {
                 console.log('Retrying in 5 seconds...');
                 await new Promise(function (resolve) { setTimeout(resolve, 5000); });
                 // Recreate pool in case IP routing changed
-                pool = new Pool({ connectionString: dbUrl, ssl: false });
+                pool = new Pool({ connectionString: dbUrl, ssl: false, max: 3, idleTimeoutMillis: 0, connectionTimeoutMillis: 10000 });
             }
         }
     }
