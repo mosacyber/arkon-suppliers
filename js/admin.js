@@ -521,6 +521,198 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // ===== DEMO DATA =====
+    window.loadDemoData = function () {
+        var suppliers = getSuppliers();
+        var demoSuppliers = [
+            {
+                Supplier_ID: 'ARK-2026-1001',
+                Company_Name: 'شركة الأفق للمقاولات',
+                CR_Number: '1010567890',
+                Establish_Date: '2015-03-12',
+                Entity_Type: 'شركة',
+                City: 'الرياض',
+                National_Address: 'حي العليا، شارع التحلية، الرياض 12345',
+                VAT_Number: '310123456700003',
+                Chamber_Number: 'RC-4521',
+                Contact_Name: 'محمد العتيبي',
+                Job_Title: 'مدير المبيعات',
+                Mobile: '+966512345678',
+                Email: 'info@alofuq.sa',
+                Website: 'https://alofuq.sa',
+                Activities: ['مواد خرسانية', 'حديد تسليح', 'أسفلت'],
+                Employee_Count: '51-200',
+                Engineer_Count: '15',
+                Largest_Project: '12,000,000',
+                Monthly_Capacity: '3,000,000',
+                Has_Factory: 'نعم',
+                Has_Equipment: 'نعم',
+                Contractor_Classification: 'الدرجة الثانية',
+                ISO_Certifications: ['ISO 9001', 'ISO 14001'],
+                Accreditations: ['أرامكو'],
+                Contractor_Membership: 'نعم',
+                Annual_Turnover: '20-50 مليون',
+                Credit_Terms: '60 يوم',
+                Credit_Limit: '2,000,000',
+                Approval_Status: 'تحت المراجعة',
+                Rating: '',
+                Notes: '',
+                Submission_Date: new Date(Date.now() - 86400000).toISOString()
+            },
+            {
+                Supplier_ID: 'ARK-2026-1002',
+                Company_Name: 'مؤسسة البنيان للتوريدات',
+                CR_Number: '2050123456',
+                Establish_Date: '2018-07-20',
+                Entity_Type: 'مؤسسة',
+                City: 'جدة',
+                National_Address: 'حي الصفا، جدة 21452',
+                VAT_Number: '310987654300003',
+                Chamber_Number: 'RC-7832',
+                Contact_Name: 'خالد الحربي',
+                Job_Title: 'المدير العام',
+                Mobile: '+966551234567',
+                Email: 'khalid@bunyan.sa',
+                Website: '',
+                Activities: ['أنابيب وشبكات مياه', 'كهرباء'],
+                Employee_Count: '11-50',
+                Engineer_Count: '8',
+                Largest_Project: '5,000,000',
+                Monthly_Capacity: '1,500,000',
+                Has_Factory: 'لا',
+                Has_Equipment: 'نعم',
+                Contractor_Classification: 'الدرجة الثالثة',
+                ISO_Certifications: ['ISO 9001'],
+                Accreditations: [],
+                Contractor_Membership: 'نعم',
+                Annual_Turnover: '5-20 مليون',
+                Credit_Terms: '30 يوم',
+                Credit_Limit: '500,000',
+                Approval_Status: 'تحت المراجعة',
+                Rating: '',
+                Notes: '',
+                Submission_Date: new Date(Date.now() - 172800000).toISOString()
+            },
+            {
+                Supplier_ID: 'ARK-2026-1003',
+                Company_Name: 'مصنع الصلب السعودي',
+                CR_Number: '1010999888',
+                Establish_Date: '2010-01-05',
+                Entity_Type: 'مصنع',
+                City: 'الدمام',
+                National_Address: 'المنطقة الصناعية الثانية، الدمام 31411',
+                VAT_Number: '310555666700003',
+                Chamber_Number: 'RC-1120',
+                Contact_Name: 'فهد الدوسري',
+                Job_Title: 'مدير التسويق',
+                Mobile: '+966599876543',
+                Email: 'fahad@saudisteel.sa',
+                Website: 'https://saudisteel.sa',
+                Activities: ['حديد تسليح', 'مصانع'],
+                Employee_Count: '201-500',
+                Engineer_Count: '35',
+                Largest_Project: '50,000,000',
+                Monthly_Capacity: '10,000,000',
+                Has_Factory: 'نعم',
+                Has_Equipment: 'نعم',
+                Contractor_Classification: 'الدرجة الأولى',
+                ISO_Certifications: ['ISO 9001', 'ISO 14001', 'ISO 45001'],
+                Accreditations: ['أرامكو', 'سابك'],
+                Contractor_Membership: 'نعم',
+                Annual_Turnover: '50-100 مليون',
+                Credit_Terms: '90 يوم',
+                Credit_Limit: '5,000,000',
+                Approval_Status: 'معتمد',
+                Rating: 5,
+                Notes: 'مورد متميز - أولوية عالية',
+                Submission_Date: new Date(Date.now() - 604800000).toISOString()
+            },
+            {
+                Supplier_ID: 'ARK-2026-1004',
+                Company_Name: 'شركة النخبة للمعدات الثقيلة',
+                CR_Number: '4030567123',
+                Establish_Date: '2020-11-15',
+                Entity_Type: 'شركة',
+                City: 'الخبر',
+                National_Address: 'حي اليرموك، الخبر 31952',
+                VAT_Number: '310444333200003',
+                Chamber_Number: '',
+                Contact_Name: 'سعود القحطاني',
+                Job_Title: 'مدير العمليات',
+                Mobile: '+966501112233',
+                Email: 'saud@nokhba-equip.sa',
+                Website: '',
+                Activities: ['معدات ثقيلة', 'مقاول باطن'],
+                Employee_Count: '11-50',
+                Engineer_Count: '5',
+                Largest_Project: '2,000,000',
+                Monthly_Capacity: '800,000',
+                Has_Factory: 'لا',
+                Has_Equipment: 'نعم',
+                Contractor_Classification: 'الدرجة الرابعة',
+                ISO_Certifications: [],
+                Accreditations: [],
+                Contractor_Membership: 'لا',
+                Annual_Turnover: '1-5 مليون',
+                Credit_Terms: 'نقدي فقط',
+                Credit_Limit: '',
+                Approval_Status: 'مرفوض',
+                Rating: '',
+                Notes: 'لا يوجد تصنيف مقاولين كافي',
+                Submission_Date: new Date(Date.now() - 432000000).toISOString()
+            },
+            {
+                Supplier_ID: 'ARK-2026-1005',
+                Company_Name: 'مؤسسة الإنشاء المتقدم',
+                CR_Number: '1010333222',
+                Establish_Date: '2017-05-08',
+                Entity_Type: 'مؤسسة',
+                City: 'مكة المكرمة',
+                National_Address: 'حي العزيزية، مكة المكرمة 21955',
+                VAT_Number: '310222111000003',
+                Chamber_Number: 'RC-5567',
+                Contact_Name: 'عبدالله الشهري',
+                Job_Title: 'مدير المشاريع',
+                Mobile: '+966544556677',
+                Email: 'abdullah@adv-const.sa',
+                Website: 'https://adv-const.sa',
+                Activities: ['ميكانيكا', 'كهرباء', 'مقاول باطن'],
+                Employee_Count: '51-200',
+                Engineer_Count: '20',
+                Largest_Project: '8,000,000',
+                Monthly_Capacity: '2,500,000',
+                Has_Factory: 'لا',
+                Has_Equipment: 'نعم',
+                Contractor_Classification: 'الدرجة الثانية',
+                ISO_Certifications: ['ISO 9001', 'ISO 45001'],
+                Accreditations: ['NHC', 'أمانات'],
+                Contractor_Membership: 'نعم',
+                Annual_Turnover: '20-50 مليون',
+                Credit_Terms: '60 يوم',
+                Credit_Limit: '1,500,000',
+                Approval_Status: 'تحت المراجعة',
+                Rating: '',
+                Notes: '',
+                Submission_Date: new Date().toISOString()
+            }
+        ];
+
+        // Merge: add only demo suppliers not already existing
+        var existingIds = {};
+        suppliers.forEach(function(s) { existingIds[s.Supplier_ID] = true; });
+        var added = 0;
+        demoSuppliers.forEach(function(d) {
+            if (!existingIds[d.Supplier_ID]) {
+                suppliers.push(d);
+                added++;
+            }
+        });
+
+        saveSuppliers(suppliers);
+        loadData();
+        alert('تم إضافة ' + added + ' مورد تجريبي');
+    };
+
     // ===== EXPORT CSV =====
     window.exportCSV = function () {
         var suppliers = getSuppliers();
