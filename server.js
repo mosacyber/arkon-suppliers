@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 var dbUrl = process.env.DATABASE_URL || 'postgresql://admin:KxCOdWFB6D8ijLC9UBD2k1HTFCSlQngd@chalet-db-pugmli:5432/chalet_db';
 var pool = new Pool({
     connectionString: dbUrl,
-    ssl: false
+    ssl: { rejectUnauthorized: false }
 });
 
 // Middleware
