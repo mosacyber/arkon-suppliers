@@ -35,6 +35,15 @@ async function initDB() {
     }
 }
 
+// Disable caching for API routes
+app.use('/api', function (req, res, next) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    res.set('Surrogate-Control', 'no-store');
+    next();
+});
+
 // ===== API ROUTES =====
 
 // GET all suppliers
