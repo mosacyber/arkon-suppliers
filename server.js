@@ -76,14 +76,14 @@ app.post('/api/suppliers', async function (req, res) {
         data.Submission_Date = new Date().toISOString();
 
         await pool.query(
-            'INSERT INTO arkon_suppliers (supplier_id, data) VALUES ($1, $2)',
+            'INSERT INTO arkon_suppliers (supplier_id, data) VALUES ($1, $2::jsonb)',
             [data.Supplier_ID, JSON.stringify(data)]
         );
 
         res.status(201).json({ success: true, Supplier_ID: data.Supplier_ID });
     } catch (err) {
-        console.error('POST error:', err.message);
-        res.status(500).json({ error: 'خطأ في حفظ البيانات' });
+        console.error('POST error:', err);
+        res.status(500).json({ error: err.message, detail: err.detail || '', code: err.code || '' });
     }
 });
 
@@ -168,6 +168,22 @@ app.get('/api/stats', async function (req, res) {
         });
     } catch (err) {
         res.status(500).json({ error: 'خطأ' });
+    }
+});
+
+// Debug DB connection
+app.get('/api/debug', async function (req, res) {
+    try {
+        var r = await pool.query('SELECT NOW() as time');
+        var tables = await pool.query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+        res.json({
+            connected: true,
+            time: r.rows[0].time,
+            tables: tables.rows.map(function (t) { return t.tablename; }),
+            dbUrl: process.env.DATABASE_URL ? 'SET (hidden)' : 'NOT SET'
+        });
+    } catch (err) {
+        res.json({ connected: false, error: err.message, dbUrl: process.env.DATABASE_URL ? 'SET' : 'NOT SET' });
     }
 });
 
