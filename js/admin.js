@@ -80,24 +80,29 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== DATA MANAGEMENT =====
-    function getSuppliers() {
-        return JSON.parse(localStorage.getItem('arkon_suppliers') || '[]');
-    }
-
-    function saveSuppliers(data) {
-        localStorage.setItem('arkon_suppliers', JSON.stringify(data));
-    }
+    // ===== DATA MANAGEMENT (SERVER API) =====
+    var cachedSuppliers = [];
 
     function loadData() {
-        var suppliers = getSuppliers();
-        updateStats(suppliers);
-        renderRecentTable(suppliers);
-        renderSuppliersTable(suppliers);
-        renderPendingTable(suppliers);
-        renderApprovedTable(suppliers);
-        renderRejectedTable(suppliers);
-        populateFilters(suppliers);
+        fetch('/api/suppliers')
+            .then(function (res) { return res.json(); })
+            .then(function (suppliers) {
+                cachedSuppliers = suppliers;
+                updateStats(suppliers);
+                renderRecentTable(suppliers);
+                renderSuppliersTable(suppliers);
+                renderPendingTable(suppliers);
+                renderApprovedTable(suppliers);
+                renderRejectedTable(suppliers);
+                populateFilters(suppliers);
+            })
+            .catch(function (err) {
+                console.error('Error loading data:', err);
+            });
+    }
+
+    function getSuppliers() {
+        return cachedSuppliers;
     }
 
     // ===== STATS =====
@@ -360,8 +365,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 sortAsc = true;
             }
 
-            var suppliers = getSuppliers();
-            suppliers.sort(function (a, b) {
+            cachedSuppliers.sort(function (a, b) {
                 var va = a[field] || '';
                 var vb = b[field] || '';
                 if (va < vb) return sortAsc ? -1 : 1;
@@ -369,8 +373,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 return 0;
             });
 
-            saveSuppliers(suppliers);
-            loadData();
+            updateStats(cachedSuppliers);
+            renderRecentTable(cachedSuppliers);
+            renderSuppliersTable(cachedSuppliers);
+            renderPendingTable(cachedSuppliers);
+            renderApprovedTable(cachedSuppliers);
+            renderRejectedTable(cachedSuppliers);
         });
     });
 
@@ -484,9 +492,11 @@ document.addEventListener('DOMContentLoaded', function () {
     window.approveSupplier = function (index) {
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            suppliers[index].Approval_Status = 'معتمد';
-            saveSuppliers(suppliers);
-            loadData();
+            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Approval_Status: 'معتمد' })
+            }).then(function () { loadData(); });
         }
     };
 
@@ -494,10 +504,13 @@ document.addEventListener('DOMContentLoaded', function () {
         var reason = prompt('سبب الرفض (اختياري):');
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            suppliers[index].Approval_Status = 'مرفوض';
-            if (reason) suppliers[index].Notes = reason;
-            saveSuppliers(suppliers);
-            loadData();
+            var body = { Approval_Status: 'مرفوض' };
+            if (reason) body.Notes = reason;
+            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(function () { loadData(); });
         }
     };
 
@@ -506,18 +519,25 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!notes) return;
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            suppliers[index].Notes = notes.value;
-            saveSuppliers(suppliers);
-            alert('تم حفظ الملاحظات');
+            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Notes: notes.value })
+            }).then(function () {
+                alert('تم حفظ الملاحظات');
+                loadData();
+            });
         }
     };
 
     window.setRating = function (index, rating) {
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            suppliers[index].Rating = rating;
-            saveSuppliers(suppliers);
-            loadData();
+            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Rating: rating })
+            }).then(function () { loadData(); });
         }
     };
 
@@ -697,20 +717,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         ];
 
-        // Merge: add only demo suppliers not already existing
-        var existingIds = {};
-        suppliers.forEach(function(s) { existingIds[s.Supplier_ID] = true; });
-        var added = 0;
-        demoSuppliers.forEach(function(d) {
-            if (!existingIds[d.Supplier_ID]) {
-                suppliers.push(d);
-                added++;
-            }
+        // Send to server
+        fetch('/api/suppliers/bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(demoSuppliers)
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (result) {
+            loadData();
+            alert('تم إضافة ' + result.added + ' مورد تجريبي');
+        })
+        .catch(function () {
+            alert('حدث خطأ في إضافة البيانات التجريبية');
         });
-
-        saveSuppliers(suppliers);
-        loadData();
-        alert('تم إضافة ' + added + ' مورد تجريبي');
     };
 
     // ===== EXPORT CSV =====

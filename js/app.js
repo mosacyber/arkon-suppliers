@@ -414,68 +414,59 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
 
-            // Simulate sending
-            setTimeout(function () {
+            var data = {
+                Company_Name: getValue('companyName'),
+                CR_Number: getValue('crNumber'),
+                Establish_Date: getValue('establishDate'),
+                Entity_Type: getValue('entityType'),
+                City: getValue('city'),
+                National_Address: getValue('nationalAddress'),
+                VAT_Number: getValue('vatNumber'),
+                Chamber_Number: getValue('chamberNumber'),
+                Contact_Name: getValue('contactName'),
+                Job_Title: getValue('jobTitle'),
+                Mobile: '+966' + getValue('mobile'),
+                Email: getValue('email'),
+                Website: getValue('website'),
+                Activities: getCheckedValues('activity'),
+                Employee_Count: getValue('employeeCount'),
+                Engineer_Count: getValue('engineerCount'),
+                Largest_Project: getValue('largestProject'),
+                Monthly_Capacity: getValue('monthlyCapacity'),
+                Has_Factory: getRadioValue('hasFactory'),
+                Has_Equipment: getRadioValue('hasEquipment'),
+                Contractor_Classification: getValue('contractorClassification'),
+                ISO_Certifications: getCheckedValues('iso'),
+                Accreditations: getCheckedValues('accreditation'),
+                Contractor_Membership: getRadioValue('contractorMembership'),
+                Annual_Turnover: getValue('annualTurnover'),
+                Credit_Terms: getValue('creditTerms'),
+                Credit_Limit: getValue('creditLimit')
+            };
+
+            fetch('/api/suppliers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (result) {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
 
-                // Generate request number
-                var reqNum = 'ARK-' + new Date().getFullYear() + '-' +
-                    String(Math.floor(Math.random() * 9000) + 1000);
-                document.getElementById('requestNumber').textContent = reqNum;
-
-                // Show success modal
-                document.getElementById('successModal').classList.add('show');
-
-                // Save to localStorage
-                saveFormData(reqNum);
-            }, 2000);
+                if (result.success) {
+                    document.getElementById('requestNumber').textContent = result.Supplier_ID;
+                    document.getElementById('successModal').classList.add('show');
+                } else {
+                    alert('حدث خطأ في الإرسال. حاول مرة أخرى.');
+                }
+            })
+            .catch(function () {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                alert('حدث خطأ في الاتصال بالسيرفر. حاول مرة أخرى.');
+            });
         });
-    }
-
-    // ===== SAVE FORM DATA =====
-    function saveFormData(requestNumber) {
-        var data = {
-            Supplier_ID: requestNumber,
-            Company_Name: getValue('companyName'),
-            CR_Number: getValue('crNumber'),
-            Establish_Date: getValue('establishDate'),
-            Entity_Type: getValue('entityType'),
-            City: getValue('city'),
-            National_Address: getValue('nationalAddress'),
-            VAT_Number: getValue('vatNumber'),
-            Chamber_Number: getValue('chamberNumber'),
-            Contact_Name: getValue('contactName'),
-            Job_Title: getValue('jobTitle'),
-            Mobile: '+966' + getValue('mobile'),
-            Email: getValue('email'),
-            Website: getValue('website'),
-            Activities: getCheckedValues('activity'),
-            Employee_Count: getValue('employeeCount'),
-            Engineer_Count: getValue('engineerCount'),
-            Largest_Project: getValue('largestProject'),
-            Monthly_Capacity: getValue('monthlyCapacity'),
-            Has_Factory: getRadioValue('hasFactory'),
-            Has_Equipment: getRadioValue('hasEquipment'),
-            Contractor_Classification: getValue('contractorClassification'),
-            ISO_Certifications: getCheckedValues('iso'),
-            Accreditations: getCheckedValues('accreditation'),
-            Contractor_Membership: getRadioValue('contractorMembership'),
-            Annual_Turnover: getValue('annualTurnover'),
-            Credit_Terms: getValue('creditTerms'),
-            Credit_Limit: getValue('creditLimit'),
-            Approval_Status: 'تحت المراجعة',
-            Rating: '',
-            Notes: '',
-            Submission_Date: new Date().toISOString()
-        };
-
-        // Save to localStorage
-        var suppliers = JSON.parse(localStorage.getItem('arkon_suppliers') || '[]');
-        suppliers.push(data);
-        localStorage.setItem('arkon_suppliers', JSON.stringify(suppliers));
-
-        console.log('Supplier Data Saved:', data);
     }
 
     function getValue(id) {
