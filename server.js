@@ -1,182 +1,174 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
-const multer = require('multer');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const DATA_FILE = path.join(__dirname, 'data', 'suppliers.json');
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
-
-// Ensure directories exist
-if (!fs.existsSync(path.join(__dirname, 'data'))) fs.mkdirSync(path.join(__dirname, 'data'));
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
-if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+// PostgreSQL connection
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: false
+});
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
-app.use('/uploads', express.static(UPLOADS_DIR));
 
-// File upload config
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, UPLOADS_DIR);
-    },
-    filename: function (req, file, cb) {
-        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
-        cb(null, uniqueName);
-    }
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
-    fileFilter: function (req, file, cb) {
-        const allowed = /pdf|jpg|jpeg|png/;
-        const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-        if (ext) cb(null, true);
-        else cb(new Error('نوع الملف غير مدعوم'));
-    }
-});
-
-// ===== HELPERS =====
-function readSuppliers() {
+// ===== CREATE TABLE ON STARTUP =====
+async function initDB() {
     try {
-        const data = fs.readFileSync(DATA_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch (e) {
-        return [];
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS arkon_suppliers (
+                id SERIAL PRIMARY KEY,
+                supplier_id VARCHAR(20) UNIQUE NOT NULL,
+                data JSONB NOT NULL,
+                created_at TIMESTAMP DEFAULT NOW()
+            )
+        `);
+        console.log('Database table ready');
+    } catch (err) {
+        console.error('DB init error:', err.message);
     }
-}
-
-function writeSuppliers(suppliers) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(suppliers, null, 2), 'utf8');
 }
 
 // ===== API ROUTES =====
 
 // GET all suppliers
-app.get('/api/suppliers', function (req, res) {
-    var suppliers = readSuppliers();
-    res.json(suppliers);
+app.get('/api/suppliers', async function (req, res) {
+    try {
+        var result = await pool.query('SELECT data FROM arkon_suppliers ORDER BY created_at DESC');
+        var suppliers = result.rows.map(function (r) { return r.data; });
+        res.json(suppliers);
+    } catch (err) {
+        console.error('GET error:', err.message);
+        res.status(500).json({ error: 'خطأ في قراءة البيانات' });
+    }
 });
 
 // GET single supplier
-app.get('/api/suppliers/:id', function (req, res) {
-    var suppliers = readSuppliers();
-    var supplier = suppliers.find(function (s) { return s.Supplier_ID === req.params.id; });
-    if (supplier) {
-        res.json(supplier);
-    } else {
-        res.status(404).json({ error: 'المورد غير موجود' });
+app.get('/api/suppliers/:id', async function (req, res) {
+    try {
+        var result = await pool.query('SELECT data FROM arkon_suppliers WHERE supplier_id = $1', [req.params.id]);
+        if (result.rows.length > 0) {
+            res.json(result.rows[0].data);
+        } else {
+            res.status(404).json({ error: 'المورد غير موجود' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'خطأ في قراءة البيانات' });
     }
 });
 
 // POST new supplier
-app.post('/api/suppliers', function (req, res) {
-    var suppliers = readSuppliers();
-    var data = req.body;
+app.post('/api/suppliers', async function (req, res) {
+    try {
+        var data = req.body;
 
-    // Generate ID
-    var year = new Date().getFullYear();
-    var num = String(Math.floor(Math.random() * 9000) + 1000);
-    data.Supplier_ID = 'ARK-' + year + '-' + num;
-    data.Approval_Status = 'تحت المراجعة';
-    data.Rating = '';
-    data.Notes = '';
-    data.Submission_Date = new Date().toISOString();
+        // Generate unique ID
+        var year = new Date().getFullYear();
+        var num = String(Math.floor(Math.random() * 9000) + 1000);
+        data.Supplier_ID = 'ARK-' + year + '-' + num;
+        data.Approval_Status = 'تحت المراجعة';
+        data.Rating = '';
+        data.Notes = '';
+        data.Submission_Date = new Date().toISOString();
 
-    suppliers.push(data);
-    writeSuppliers(suppliers);
+        await pool.query(
+            'INSERT INTO arkon_suppliers (supplier_id, data) VALUES ($1, $2)',
+            [data.Supplier_ID, JSON.stringify(data)]
+        );
 
-    res.status(201).json({ success: true, Supplier_ID: data.Supplier_ID });
+        res.status(201).json({ success: true, Supplier_ID: data.Supplier_ID });
+    } catch (err) {
+        console.error('POST error:', err.message);
+        res.status(500).json({ error: 'خطأ في حفظ البيانات' });
+    }
 });
 
-// PUT update supplier (status, rating, notes)
-app.put('/api/suppliers/:id', function (req, res) {
-    var suppliers = readSuppliers();
-    var index = suppliers.findIndex(function (s) { return s.Supplier_ID === req.params.id; });
+// PUT update supplier
+app.put('/api/suppliers/:id', async function (req, res) {
+    try {
+        var result = await pool.query('SELECT data FROM arkon_suppliers WHERE supplier_id = $1', [req.params.id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'المورد غير موجود' });
+        }
 
-    if (index === -1) {
-        return res.status(404).json({ error: 'المورد غير موجود' });
+        var supplier = result.rows[0].data;
+        var updates = req.body;
+        Object.keys(updates).forEach(function (key) {
+            supplier[key] = updates[key];
+        });
+
+        await pool.query(
+            'UPDATE arkon_suppliers SET data = $1 WHERE supplier_id = $2',
+            [JSON.stringify(supplier), req.params.id]
+        );
+
+        res.json({ success: true, supplier: supplier });
+    } catch (err) {
+        console.error('PUT error:', err.message);
+        res.status(500).json({ error: 'خطأ في تحديث البيانات' });
     }
-
-    var updates = req.body;
-    Object.keys(updates).forEach(function (key) {
-        suppliers[index][key] = updates[key];
-    });
-
-    writeSuppliers(suppliers);
-    res.json({ success: true, supplier: suppliers[index] });
 });
 
 // DELETE supplier
-app.delete('/api/suppliers/:id', function (req, res) {
-    var suppliers = readSuppliers();
-    var filtered = suppliers.filter(function (s) { return s.Supplier_ID !== req.params.id; });
-
-    if (filtered.length === suppliers.length) {
-        return res.status(404).json({ error: 'المورد غير موجود' });
-    }
-
-    writeSuppliers(filtered);
-    res.json({ success: true });
-});
-
-// POST upload files
-app.post('/api/upload', upload.array('files', 10), function (req, res) {
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ error: 'لم يتم رفع ملفات' });
-    }
-
-    var uploaded = req.files.map(function (f) {
-        return {
-            filename: f.filename,
-            originalname: f.originalname,
-            size: f.size,
-            path: '/uploads/' + f.filename
-        };
-    });
-
-    res.json({ success: true, files: uploaded });
-});
-
-// POST bulk demo data
-app.post('/api/suppliers/bulk', function (req, res) {
-    var suppliers = readSuppliers();
-    var newItems = req.body;
-
-    if (!Array.isArray(newItems)) {
-        return res.status(400).json({ error: 'البيانات يجب أن تكون مصفوفة' });
-    }
-
-    var existingIds = {};
-    suppliers.forEach(function (s) { existingIds[s.Supplier_ID] = true; });
-
-    var added = 0;
-    newItems.forEach(function (item) {
-        if (!existingIds[item.Supplier_ID]) {
-            suppliers.push(item);
-            added++;
+app.delete('/api/suppliers/:id', async function (req, res) {
+    try {
+        var result = await pool.query('DELETE FROM arkon_suppliers WHERE supplier_id = $1', [req.params.id]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'المورد غير موجود' });
         }
-    });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'خطأ في حذف البيانات' });
+    }
+});
 
-    writeSuppliers(suppliers);
-    res.json({ success: true, added: added });
+// POST bulk (demo data)
+app.post('/api/suppliers/bulk', async function (req, res) {
+    try {
+        var newItems = req.body;
+        if (!Array.isArray(newItems)) {
+            return res.status(400).json({ error: 'البيانات يجب أن تكون مصفوفة' });
+        }
+
+        var added = 0;
+        for (var i = 0; i < newItems.length; i++) {
+            var item = newItems[i];
+            try {
+                await pool.query(
+                    'INSERT INTO arkon_suppliers (supplier_id, data) VALUES ($1, $2) ON CONFLICT (supplier_id) DO NOTHING',
+                    [item.Supplier_ID, JSON.stringify(item)]
+                );
+                added++;
+            } catch (e) {
+                // Skip duplicates
+            }
+        }
+
+        res.json({ success: true, added: added });
+    } catch (err) {
+        console.error('BULK error:', err.message);
+        res.status(500).json({ error: 'خطأ في حفظ البيانات' });
+    }
 });
 
 // GET stats
-app.get('/api/stats', function (req, res) {
-    var suppliers = readSuppliers();
-    res.json({
-        total: suppliers.length,
-        pending: suppliers.filter(function (s) { return s.Approval_Status === 'تحت المراجعة'; }).length,
-        approved: suppliers.filter(function (s) { return s.Approval_Status === 'معتمد'; }).length,
-        rejected: suppliers.filter(function (s) { return s.Approval_Status === 'مرفوض'; }).length
-    });
+app.get('/api/stats', async function (req, res) {
+    try {
+        var result = await pool.query('SELECT data FROM arkon_suppliers');
+        var suppliers = result.rows.map(function (r) { return r.data; });
+        res.json({
+            total: suppliers.length,
+            pending: suppliers.filter(function (s) { return s.Approval_Status === 'تحت المراجعة'; }).length,
+            approved: suppliers.filter(function (s) { return s.Approval_Status === 'معتمد'; }).length,
+            rejected: suppliers.filter(function (s) { return s.Approval_Status === 'مرفوض'; }).length
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'خطأ' });
+    }
 });
 
 // Serve main page
@@ -184,6 +176,9 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, function () {
-    console.log('Arkon Suppliers Server running on port ' + PORT);
+// Start server
+initDB().then(function () {
+    app.listen(PORT, function () {
+        console.log('Arkon Suppliers Server running on port ' + PORT);
+    });
 });
