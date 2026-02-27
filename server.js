@@ -18,21 +18,32 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// ===== CREATE TABLE ON STARTUP =====
-async function initDB() {
-    try {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS arkon_suppliers (
-                id SERIAL PRIMARY KEY,
-                supplier_id VARCHAR(20) UNIQUE NOT NULL,
-                data JSONB NOT NULL,
-                created_at TIMESTAMP DEFAULT NOW()
-            )
-        `);
-        console.log('Database table ready');
-    } catch (err) {
-        console.error('DB init error:', err.message);
+// ===== CREATE TABLE ON STARTUP WITH RETRY =====
+async function initDB(retries) {
+    if (retries === undefined) retries = 10;
+    for (var attempt = 1; attempt <= retries; attempt++) {
+        try {
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS arkon_suppliers (
+                    id SERIAL PRIMARY KEY,
+                    supplier_id VARCHAR(20) UNIQUE NOT NULL,
+                    data JSONB NOT NULL,
+                    created_at TIMESTAMP DEFAULT NOW()
+                )
+            `);
+            console.log('Database table ready (attempt ' + attempt + ')');
+            return;
+        } catch (err) {
+            console.error('DB init attempt ' + attempt + '/' + retries + ' error:', err.message);
+            if (attempt < retries) {
+                console.log('Retrying in 5 seconds...');
+                await new Promise(function (resolve) { setTimeout(resolve, 5000); });
+                // Recreate pool in case IP routing changed
+                pool = new Pool({ connectionString: dbUrl, ssl: false });
+            }
+        }
     }
+    console.error('Could not connect to database after ' + retries + ' attempts');
 }
 
 // Disable caching for API routes
