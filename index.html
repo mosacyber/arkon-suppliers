@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الموردين - تحالف أركون للبنية التحتية والإنشاءات</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ===== HEADER / NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <div class="logo-icon">A</div>
+                <div class="logo-text">
+                    <span class="logo-main">تحالف أركون</span>
+                    <span class="logo-sub">للبنية التحتية والإنشاءات</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#hero">الرئيسية</a>
+                <a href="#form-start">التسجيل</a>
+                <a href="#contact-section">التواصل</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 1. HERO SECTION ===== -->
+    <section id="hero" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">منصة تأهيل الموردين</div>
+            <h1 class="hero-title">
+                انضم إلى شبكة موردين
+                <span class="highlight">تحالف أركون</span>
+                للبنية التحتية والإنشاءات
+            </h1>
+            <p class="hero-description">
+                نعمل على بناء قاعدة موردين معتمدين للمشاركة في مشاريع حكومية وخاصة داخل المملكة العربية السعودية
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="150">0</span>+
+                    <span class="stat-label">مورد معتمد</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="50">0</span>+
+                    <span class="stat-label">مشروع نشط</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="13">0</span>
+                    <span class="stat-label">منطقة تغطية</span>
+                </div>
+            </div>
+            <a href="#form-start" class="btn btn-primary btn-hero">
+                <span>سجّل كمورد معتمد</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 5l-7 7 7 7"/>
+                </svg>
+            </a>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,60 1440,60 L1440,120 L0,120 Z" fill="#f8f9fa"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div id="form-start" class="progress-section">
+        <div class="container">
+            <div class="progress-bar-container">
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">بيانات الشركة</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">التواصل</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">النشاط</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-circle">4</div>
+                        <span class="step-label">القدرة التشغيلية</span>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <div class="step-circle">5</div>
+                        <span class="step-label">التصنيفات</span>
+                    </div>
+                    <div class="progress-step" data-step="6">
+                        <div class="step-circle">6</div>
+                        <span class="step-label">الوضع المالي</span>
+                    </div>
+                    <div class="progress-step" data-step="7">
+                        <div class="step-circle">7</div>
+                        <span class="step-label">المستندات</span>
+                    </div>
+                    <div class="progress-step" data-step="8">
+                        <div class="step-circle">8</div>
+                        <span class="step-label">الإقرار</span>
+                    </div>
+                </div>
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORM ===== -->
+    <main class="form-section">
+        <div class="container">
+            <form id="supplierForm" novalidate>
+
+                <!-- ===== STEP 1: بيانات الشركة الأساسية ===== -->
+                <div class="form-step active" data-step="1">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 21h18M3 7v14M21 7v14M6 11h.01M6 15h.01M6 19h.01M10 11h.01M10 15h.01M10 19h.01M14 11h.01M14 15h.01M14 19h.01M18 11h.01M18 15h.01M18 19h.01M8 7V3h8v4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">بيانات الشركة الأساسية</h2>
+                            <p class="section-subtitle">أدخل المعلومات الرسمية للشركة كما هي في السجل التجاري</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="companyName">اسم الشركة <span class="required">*</span></label>
+                            <input type="text" id="companyName" name="companyName" placeholder="أدخل الاسم الرسمي للشركة" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="crNumber">رقم السجل التجاري <span class="required">*</span></label>
+                            <input type="text" id="crNumber" name="crNumber" placeholder="مثال: 1010XXXXXX" maxlength="10" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="establishDate">تاريخ التأسيس <span class="required">*</span></label>
+                            <input type="date" id="establishDate" name="establishDate" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="entityType">نوع الكيان <span class="required">*</span></label>
+                            <select id="entityType" name="entityType" required>
+                                <option value="">اختر نوع الكيان</option>
+                                <option value="مؤسسة">مؤسسة</option>
+                                <option value="شركة">شركة</option>
+                                <option value="مصنع">مصنع</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="city">المدينة <span class="required">*</span></label>
+                            <select id="city" name="city" required>
+                                <option value="">اختر المدينة</option>
+                                <option value="الرياض">الرياض</option>
+                                <option value="جدة">جدة</option>
+                                <option value="مكة المكرمة">مكة المكرمة</option>
+                                <option value="المدينة المنورة">المدينة المنورة</option>
+                                <option value="الدمام">الدمام</option>
+                                <option value="الخبر">الخبر</option>
+                                <option value="الظهران">الظهران</option>
+                                <option value="تبوك">تبوك</option>
+                                <option value="أبها">أبها</option>
+                                <option value="الطائف">الطائف</option>
+                                <option value="بريدة">بريدة</option>
+                                <option value="نجران">نجران</option>
+                                <option value="جازان">جازان</option>
+                                <option value="ينبع">ينبع</option>
+                                <option value="حائل">حائل</option>
+                                <option value="الجبيل">الجبيل</option>
+                                <option value="خميس مشيط">خميس مشيط</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nationalAddress">العنوان الوطني <span class="required">*</span></label>
+                            <input type="text" id="nationalAddress" name="nationalAddress" placeholder="أدخل العنوان الوطني الكامل" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vatNumber">رقم ضريبة القيمة المضافة <span class="required">*</span></label>
+                            <input type="text" id="vatNumber" name="vatNumber" placeholder="مثال: 3XXXXXXXXXXXXXXX" maxlength="15" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="chamberNumber">رقم الغرفة التجارية</label>
+                            <input type="text" id="chamberNumber" name="chamberNumber" placeholder="أدخل رقم عضوية الغرفة التجارية">
+                            <span class="error-msg"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <div></div>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 2: معلومات التواصل ===== -->
+                <div class="form-step" data-step="2">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">معلومات التواصل</h2>
+                            <p class="section-subtitle">بيانات الشخص المسؤول عن التواصل مع التحالف</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="contactName">اسم الشخص المسؤول <span class="required">*</span></label>
+                            <input type="text" id="contactName" name="contactName" placeholder="الاسم الكامل" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jobTitle">المسمى الوظيفي <span class="required">*</span></label>
+                            <input type="text" id="jobTitle" name="jobTitle" placeholder="مثال: مدير المبيعات" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mobile">رقم الجوال <span class="required">*</span></label>
+                            <div class="input-with-prefix">
+                                <span class="input-prefix">966+</span>
+                                <input type="tel" id="mobile" name="mobile" placeholder="5XXXXXXXX" maxlength="9" required>
+                            </div>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">البريد الإلكتروني <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="example@company.com" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="website">الموقع الإلكتروني <span class="optional">(اختياري)</span></label>
+                            <input type="url" id="website" name="website" placeholder="https://www.example.com">
+                            <span class="error-msg"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 3: نشاط الشركة ===== -->
+                <div class="form-step" data-step="3">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">نشاط الشركة</h2>
+                            <p class="section-subtitle">اختر مجالات عمل شركتك (يمكن اختيار أكثر من خيار)</p>
+                        </div>
+                    </div>
+
+                    <div class="activity-grid">
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="مواد خرسانية">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                        <path d="M3 9h18M9 3v18"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">مواد خرسانية</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="حديد تسليح">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M4 4l16 16M4 20L20 4M12 2v20M2 12h20"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">حديد تسليح</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="أسفلت">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M4 20h16M4 20l2-8h12l2 8M8 12V6M16 12V6M8 6h8"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">أسفلت</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="أنابيب وشبكات مياه">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M4 10h6v4H4zM14 10h6v4h-6zM10 12h4M4 12H2M22 12h-2"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">أنابيب وشبكات مياه</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="معدات ثقيلة">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M5 18h14M5 18a2 2 0 110-4h14a2 2 0 110 4M3 6h4l3 8M14 6h4l3 8"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">معدات ثقيلة</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="مقاول باطن">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">مقاول باطن</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="كهرباء">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">كهرباء</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="ميكانيكا">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">ميكانيكا</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="إعاشة مواقع">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">إعاشة مواقع</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card">
+                            <input type="checkbox" name="activity" value="مصانع">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M2 20h20M4 20V10l4-2v12M12 20V8l4-2v14M20 20V6l-4 2"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">مصانع</span>
+                            </div>
+                        </label>
+
+                        <label class="activity-card activity-other">
+                            <input type="checkbox" name="activity" value="أخرى" id="otherActivityCheck">
+                            <div class="activity-content">
+                                <div class="activity-icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 8v8M8 12h8"/>
+                                    </svg>
+                                </div>
+                                <span class="activity-name">أخرى</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group full-width other-activity-input" id="otherActivityGroup" style="display:none;">
+                        <label for="otherActivity">حدد النشاط الآخر</label>
+                        <input type="text" id="otherActivity" name="otherActivity" placeholder="اكتب نوع النشاط هنا...">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 4: القدرة التشغيلية ===== -->
+                <div class="form-step" data-step="4">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20V10M18 20V4M6 20v-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">القدرة التشغيلية</h2>
+                            <p class="section-subtitle">حدد القدرات والإمكانيات التشغيلية لشركتك</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="employeeCount">عدد الموظفين <span class="required">*</span></label>
+                            <select id="employeeCount" name="employeeCount" required>
+                                <option value="">اختر</option>
+                                <option value="1-10">1 - 10</option>
+                                <option value="11-50">11 - 50</option>
+                                <option value="51-200">51 - 200</option>
+                                <option value="201-500">201 - 500</option>
+                                <option value="500+">أكثر من 500</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="engineerCount">عدد المهندسين <span class="required">*</span></label>
+                            <input type="number" id="engineerCount" name="engineerCount" placeholder="أدخل العدد" min="0" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="largestProject">قيمة أكبر مشروع تم تنفيذه (ريال) <span class="required">*</span></label>
+                            <input type="text" id="largestProject" name="largestProject" placeholder="مثال: 5,000,000" required>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="monthlyCapacity">القدرة التوريدية الشهرية (ريال)</label>
+                            <input type="text" id="monthlyCapacity" name="monthlyCapacity" placeholder="مثال: 1,000,000">
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>هل لديكم مصنع؟ <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-card">
+                                    <input type="radio" name="hasFactory" value="نعم" required>
+                                    <span class="radio-label">نعم</span>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="hasFactory" value="لا">
+                                    <span class="radio-label">لا</span>
+                                </label>
+                            </div>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>هل لديكم معدات؟ <span class="required">*</span></label>
+                            <div class="radio-group">
+                                <label class="radio-card">
+                                    <input type="radio" name="hasEquipment" value="نعم" required>
+                                    <span class="radio-label">نعم</span>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="hasEquipment" value="لا">
+                                    <span class="radio-label">لا</span>
+                                </label>
+                            </div>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group full-width" id="equipmentListGroup" style="display:none;">
+                            <label for="equipmentList">قائمة المعدات</label>
+                            <textarea id="equipmentList" name="equipmentList" rows="4" placeholder="اكتب قائمة المعدات المتوفرة..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 5: التصنيفات والاعتمادات ===== -->
+                <div class="form-step" data-step="5">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 15l-2 5-1-3-3-1 5-2zM20.88 18.09A10 10 0 005.91 3.12"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">التصنيفات والاعتمادات</h2>
+                            <p class="section-subtitle">أدخل تصنيفات الشركة والشهادات المعتمدة</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="contractorClassification">تصنيف المقاولين</label>
+                            <select id="contractorClassification" name="contractorClassification">
+                                <option value="">اختر التصنيف</option>
+                                <option value="الدرجة الأولى">الدرجة الأولى</option>
+                                <option value="الدرجة الثانية">الدرجة الثانية</option>
+                                <option value="الدرجة الثالثة">الدرجة الثالثة</option>
+                                <option value="الدرجة الرابعة">الدرجة الرابعة</option>
+                                <option value="الدرجة الخامسة">الدرجة الخامسة</option>
+                                <option value="غير مصنف">غير مصنف</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>شهادات ISO</label>
+                            <div class="checkbox-group-vertical">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="iso" value="ISO 9001">
+                                    <span>ISO 9001 - إدارة الجودة</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="iso" value="ISO 14001">
+                                    <span>ISO 14001 - الإدارة البيئية</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="iso" value="ISO 45001">
+                                    <span>ISO 45001 - السلامة المهنية</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>اعتمادات الجهات</label>
+                            <div class="checkbox-group-horizontal">
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="accreditation" value="أرامكو">
+                                    <span>أرامكو</span>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="accreditation" value="سابك">
+                                    <span>سابك</span>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="accreditation" value="NHC">
+                                    <span>NHC</span>
+                                </label>
+                                <label class="checkbox-card">
+                                    <input type="checkbox" name="accreditation" value="أمانات">
+                                    <span>أمانات</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>عضوية هيئة المقاولين</label>
+                            <div class="radio-group">
+                                <label class="radio-card">
+                                    <input type="radio" name="contractorMembership" value="نعم">
+                                    <span class="radio-label">نعم</span>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="contractorMembership" value="لا">
+                                    <span class="radio-label">لا</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="certFiles">إرفاق الشهادات (PDF)</label>
+                            <div class="file-upload-zone" id="certUploadZone">
+                                <input type="file" id="certFiles" name="certFiles" multiple accept=".pdf" class="file-input">
+                                <div class="file-upload-content">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                    </svg>
+                                    <p>اسحب الملفات هنا أو <span class="upload-link">تصفح</span></p>
+                                    <small>PDF فقط - الحد الأقصى 10 ميجابايت لكل ملف</small>
+                                </div>
+                                <div class="file-list" id="certFileList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 6: الوضع المالي ===== -->
+                <div class="form-step" data-step="6">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">الوضع المالي</h2>
+                            <p class="section-subtitle">المعلومات المالية تساعدنا في تقييم القدرة التوريدية</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="annualTurnover">متوسط حجم الأعمال السنوي (ريال) <span class="required">*</span></label>
+                            <select id="annualTurnover" name="annualTurnover" required>
+                                <option value="">اختر</option>
+                                <option value="أقل من مليون">أقل من 1,000,000</option>
+                                <option value="1-5 مليون">1,000,000 - 5,000,000</option>
+                                <option value="5-20 مليون">5,000,000 - 20,000,000</option>
+                                <option value="20-50 مليون">20,000,000 - 50,000,000</option>
+                                <option value="50-100 مليون">50,000,000 - 100,000,000</option>
+                                <option value="أكثر من 100 مليون">أكثر من 100,000,000</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="creditTerms">القدرة على التوريد الآجل <span class="required">*</span></label>
+                            <select id="creditTerms" name="creditTerms" required>
+                                <option value="">اختر</option>
+                                <option value="نقدي فقط">نقدي فقط</option>
+                                <option value="30 يوم">30 يوم</option>
+                                <option value="60 يوم">60 يوم</option>
+                                <option value="90 يوم">90 يوم</option>
+                            </select>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="creditLimit">حد ائتماني مقترح للتحالف (ريال)</label>
+                            <input type="text" id="creditLimit" name="creditLimit" placeholder="مثال: 500,000">
+                            <span class="error-msg"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 7: إرفاق المستندات ===== -->
+                <div class="form-step" data-step="7">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">إرفاق المستندات</h2>
+                            <p class="section-subtitle">ارفق المستندات المطلوبة لإتمام عملية التأهيل</p>
+                        </div>
+                    </div>
+
+                    <div class="documents-grid">
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>السجل التجاري <span class="required">*</span></span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="commercialRegister">
+                                <input type="file" name="commercialRegister" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>شهادة الزكاة <span class="required">*</span></span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="zakatCert">
+                                <input type="file" name="zakatCert" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>شهادة التأمينات <span class="required">*</span></span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="insuranceCert">
+                                <input type="file" name="insuranceCert" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>شهادة ضريبة القيمة المضافة <span class="required">*</span></span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="vatCert">
+                                <input type="file" name="vatCert" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>خطاب تعريف بنكي</span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="bankLetter">
+                                <input type="file" name="bankLetter" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+
+                        <div class="document-upload-card">
+                            <div class="doc-card-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                <span>كتالوج المنتجات</span>
+                            </div>
+                            <div class="doc-upload-area" data-doc="catalog">
+                                <input type="file" name="catalog" accept=".pdf,.jpg,.png" class="file-input">
+                                <p class="doc-upload-text">اسحب أو <span class="upload-link">تصفح</span></p>
+                                <div class="doc-file-name"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="button" class="btn btn-primary btn-next" onclick="nextStep()">
+                            التالي
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 5l-7 7 7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STEP 8: الإقرار والإرسال ===== -->
+                <div class="form-step" data-step="8">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="section-title">الإقرار والإرسال</h2>
+                            <p class="section-subtitle">راجع بياناتك وأقر بصحتها لإتمام التسجيل</p>
+                        </div>
+                    </div>
+
+                    <!-- Summary Preview -->
+                    <div class="summary-card">
+                        <h3 class="summary-title">ملخص البيانات المدخلة</h3>
+                        <div id="summaryContent" class="summary-content"></div>
+                    </div>
+
+                    <div class="declaration-section">
+                        <label class="declaration-item">
+                            <input type="checkbox" id="dataAccuracy" name="dataAccuracy" required>
+                            <div class="declaration-text">
+                                <strong>أقر بصحة البيانات</strong>
+                                <p>أقر بأن جميع البيانات والمعلومات المقدمة صحيحة ودقيقة، وأتحمل المسؤولية الكاملة في حال ثبوت خلاف ذلك.</p>
+                            </div>
+                        </label>
+
+                        <label class="declaration-item">
+                            <input type="checkbox" id="policyAgreement" name="policyAgreement" required>
+                            <div class="declaration-text">
+                                <strong>أوافق على سياسة التحالف</strong>
+                                <p>أوافق على الالتزام بسياسات وشروط تحالف أركون للبنية التحتية والإنشاءات المتعلقة بالتوريد والتعاقد.</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary btn-prev" onclick="prevStep()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                            السابق
+                        </button>
+                        <button type="submit" class="btn btn-success btn-submit" id="submitBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                            </svg>
+                            إرسال طلب التأهيل
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- ===== SUCCESS MODAL ===== -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="success-animation">
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h2>تم إرسال طلبك بنجاح!</h2>
+            <p>رقم الطلب: <strong id="requestNumber"></strong></p>
+            <p class="modal-desc">سيتم مراجعة طلبك من قبل فريق التأهيل وسيتم التواصل معك خلال 5 أيام عمل.</p>
+            <button class="btn btn-primary" onclick="closeModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" id="contact-section">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">A</div>
+                        <div class="logo-text">
+                            <span class="logo-main">تحالف أركون</span>
+                            <span class="logo-sub">للبنية التحتية والإنشاءات</span>
+                        </div>
+                    </div>
+                    <p class="footer-desc">نبني شراكات استراتيجية مع أفضل الموردين في المملكة لتنفيذ مشاريع البنية التحتية بأعلى معايير الجودة.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>روابط سريعة</h4>
+                    <a href="#hero">الرئيسية</a>
+                    <a href="#form-start">تسجيل مورد</a>
+                    <a href="#">عن التحالف</a>
+                    <a href="#">سياسة الخصوصية</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>تواصل معنا</h4>
+                    <p>البريد: info@arkon-alliance.sa</p>
+                    <p>الهاتف: 920XXXXXXX</p>
+                    <p>المملكة العربية السعودية</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>جميع الحقوق محفوظة &copy; 2026 تحالف أركون للبنية التحتية والإنشاءات</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

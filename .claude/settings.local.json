@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.cranl.com)",
+      "Bash(powershell -NoExit -c \"irm https://cranl.com/install.ps1 | iex\")",
+      "Bash(curl -s -H \"Authorization: Bearer cranl_sk_h0i2HqWwiWIpYPF74DO2UD5mBrP7eOHL\" https://app.cranl.com/api/projects)",
+      "Bash(curl -s -X POST -H \"Authorization: Bearer cranl_sk_h0i2HqWwiWIpYPF74DO2UD5mBrP7eOHL\" -H \"Content-Type: application/json\" -d '{\"\"name\"\":\"\"arkon-suppliers\"\",\"\"organizationId\"\":\"\"23778e2b-0b42-40e0-8288-c58d4c0039db\"\"}' https://app.cranl.com/api/projects)",
+      "Bash(curl -s -H \"Authorization: Bearer cranl_sk_h0i2HqWwiWIpYPF74DO2UD5mBrP7eOHL\" https://app.cranl.com/api/applications)",
+      "Bash(cranl version)",
+      "Bash(gh auth status)",
+      "Bash(git init)",
+      "Bash(git add -A)",
+      "Bash(git commit -m \"Initial: Arkon Suppliers Registration Portal\")"
+    ]
+  }
+}
