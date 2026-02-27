@@ -402,6 +402,82 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
+    // ===== FILE READING HELPER =====
+    function readFileAsBase64(file) {
+        return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                resolve({
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    data: reader.result
+                });
+            };
+            reader.onerror = function () { reject(reader.error); };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function collectFiles() {
+        var promises = [];
+        var fileMap = {};
+        var MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+        // Document upload cards
+        var docNames = ['commercialRegister', 'zakatCert', 'insuranceCert', 'vatCert', 'bankLetter', 'catalog'];
+        var docLabels = {
+            commercialRegister: 'السجل التجاري',
+            zakatCert: 'شهادة الزكاة',
+            insuranceCert: 'شهادة التأمين',
+            vatCert: 'شهادة الضريبة',
+            bankLetter: 'خطاب البنك',
+            catalog: 'كتالوج المنتجات'
+        };
+
+        docNames.forEach(function (name) {
+            var input = document.querySelector('input[name="' + name + '"]');
+            if (input && input.files.length > 0) {
+                var file = input.files[0];
+                if (file.size > MAX_FILE_SIZE) {
+                    alert('الملف "' + file.name + '" أكبر من 5 ميجابايت. يرجى تصغير حجم الملف.');
+                    return;
+                }
+                promises.push(
+                    readFileAsBase64(file).then(function (fileData) {
+                        fileData.docType = name;
+                        fileData.docLabel = docLabels[name];
+                        fileMap[name] = fileData;
+                    })
+                );
+            }
+        });
+
+        // Certificate files (multiple)
+        var certInput = document.getElementById('certFiles');
+        if (certInput && certInput.files.length > 0) {
+            var certFiles = [];
+            Array.from(certInput.files).forEach(function (file) {
+                if (file.size > MAX_FILE_SIZE) {
+                    alert('الملف "' + file.name + '" أكبر من 5 ميجابايت.');
+                    return;
+                }
+                promises.push(
+                    readFileAsBase64(file).then(function (fileData) {
+                        fileData.docType = 'certificate';
+                        fileData.docLabel = 'شهادة';
+                        certFiles.push(fileData);
+                    })
+                );
+            });
+            fileMap._certFiles = certFiles;
+        }
+
+        return Promise.all(promises).then(function () {
+            return fileMap;
+        });
+    }
+
     // ===== FORM SUBMISSION =====
     var form = document.getElementById('supplierForm');
     if (form) {
@@ -444,10 +520,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 Credit_Limit: getValue('creditLimit')
             };
 
-            fetch('/api/suppliers', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+            // Collect files then submit
+            collectFiles().then(function (fileMap) {
+                if (Object.keys(fileMap).length > 0) {
+                    data.Files = fileMap;
+                }
+
+                return fetch('/api/suppliers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
             })
             .then(function (res) { return res.json(); })
             .then(function (result) {

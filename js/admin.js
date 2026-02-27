@@ -441,6 +441,56 @@ document.addEventListener('DOMContentLoaded', function () {
         html += detailItem('التوريد الآجل', s.Credit_Terms);
         html += detailItem('الحد الائتماني', s.Credit_Limit);
 
+        // Documents / Files
+        if (s.Files && Object.keys(s.Files).length > 0) {
+            html += '<div class="detail-section-title">المستندات المرفقة</div>';
+            html += '<div class="files-grid">';
+
+            var docLabels = {
+                commercialRegister: 'السجل التجاري',
+                zakatCert: 'شهادة الزكاة',
+                insuranceCert: 'شهادة التأمين',
+                vatCert: 'شهادة الضريبة',
+                bankLetter: 'خطاب البنك',
+                catalog: 'كتالوج المنتجات'
+            };
+
+            Object.keys(s.Files).forEach(function (key) {
+                if (key === '_certFiles') {
+                    // Multiple certificate files
+                    var certs = s.Files._certFiles;
+                    if (Array.isArray(certs)) {
+                        certs.forEach(function (cert, idx) {
+                            html += '<div class="file-card">' +
+                                '<div class="file-card-icon">' + getFileIcon(cert.type) + '</div>' +
+                                '<div class="file-card-info">' +
+                                    '<div class="file-card-label">شهادة ' + (idx + 1) + '</div>' +
+                                    '<div class="file-card-name">' + escapeHtml(cert.name) + '</div>' +
+                                    '<div class="file-card-size">' + formatFileSize(cert.size) + '</div>' +
+                                '</div>' +
+                                '<button class="file-card-btn" onclick="viewFile(\'' + escapeAttr(cert.data) + '\', \'' + escapeAttr(cert.type) + '\')">عرض</button>' +
+                                '</div>';
+                        });
+                    }
+                } else {
+                    var fileData = s.Files[key];
+                    if (fileData && fileData.data) {
+                        html += '<div class="file-card">' +
+                            '<div class="file-card-icon">' + getFileIcon(fileData.type) + '</div>' +
+                            '<div class="file-card-info">' +
+                                '<div class="file-card-label">' + escapeHtml(docLabels[key] || key) + '</div>' +
+                                '<div class="file-card-name">' + escapeHtml(fileData.name) + '</div>' +
+                                '<div class="file-card-size">' + formatFileSize(fileData.size) + '</div>' +
+                            '</div>' +
+                            '<button class="file-card-btn" onclick="viewFile(\'' + escapeAttr(fileData.data) + '\', \'' + escapeAttr(fileData.type) + '\')">عرض</button>' +
+                            '</div>';
+                    }
+                }
+            });
+
+            html += '</div>';
+        }
+
         // Status
         html += '<div class="detail-section-title">حالة الطلب</div>';
         html += '<div class="detail-item"><div class="detail-label">الحالة</div><div class="detail-value">' + getStatusBadge(s.Approval_Status) + '</div></div>';
@@ -782,6 +832,35 @@ document.addEventListener('DOMContentLoaded', function () {
         a.click();
         URL.revokeObjectURL(url);
     };
+
+    // ===== FILE HELPERS =====
+    window.viewFile = function (dataUrl, type) {
+        var win = window.open('');
+        if (type && type.indexOf('pdf') !== -1) {
+            win.document.write('<iframe src="' + dataUrl + '" style="width:100%;height:100%;border:none;"></iframe>');
+        } else {
+            win.document.write('<img src="' + dataUrl + '" style="max-width:100%;height:auto;">');
+        }
+    };
+
+    function getFileIcon(type) {
+        if (!type) return '📄';
+        if (type.indexOf('pdf') !== -1) return '📕';
+        if (type.indexOf('image') !== -1) return '🖼️';
+        return '📄';
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes) return '';
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+
+    function escapeAttr(str) {
+        if (!str) return '';
+        return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
 
     // ===== UTILITY =====
     function escapeHtml(text) {

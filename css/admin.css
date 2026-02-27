@@ -805,6 +805,70 @@ body {
     border-color: var(--primary);
 }
 
+/* ===== FILE CARDS ===== */
+.files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    grid-column: 1 / -1;
+}
+
+.file-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.file-card-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.file-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-card-label {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.file-card-name {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-card-size {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.file-card-btn {
+    padding: 6px 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.file-card-btn:hover {
+    background: var(--primary-dark);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .stats-grid {
