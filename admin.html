@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الإدارة - تحالف أركون</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-icon">A</div>
+                <h1>تحالف أركون</h1>
+                <p>لوحة إدارة الموردين</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminUser">اسم المستخدم</label>
+                    <input type="text" id="adminUser" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPass">كلمة المرور</label>
+                    <input type="password" id="adminPass" placeholder="********" required>
+                </div>
+                <div id="loginError" class="login-error"></div>
+                <button type="submit" class="btn btn-primary btn-login">تسجيل الدخول</button>
+            </form>
+            <div class="login-hint">
+                <small>المستخدم: <strong>admin</strong> | كلمة المرور: <strong>arkon2026</strong></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN DASHBOARD ===== -->
+    <div id="dashboard" class="dashboard" style="display:none;">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-sm">A</div>
+                <div>
+                    <div class="sidebar-title">تحالف أركون</div>
+                    <div class="sidebar-subtitle">لوحة الإدارة</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="overview">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    نظرة عامة
+                </a>
+                <a href="#" class="nav-item" data-page="suppliers">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                    الموردين
+                </a>
+                <a href="#" class="nav-item" data-page="pending">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    بانتظار المراجعة
+                </a>
+                <a href="#" class="nav-item" data-page="approved">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    المعتمدين
+                </a>
+                <a href="#" class="nav-item" data-page="rejected">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    المرفوضين
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                    تسجيل خروج
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+                <div class="topbar-right">
+                    <button class="menu-toggle" id="menuToggle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    <h2 id="pageTitle">نظرة عامة</h2>
+                </div>
+                <div class="topbar-left">
+                    <div class="admin-badge">
+                        <div class="admin-avatar">AD</div>
+                        <span>المدير</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- OVERVIEW PAGE -->
+            <div id="page-overview" class="page active">
+                <div class="stats-grid">
+                    <div class="stat-card stat-total">
+                        <div class="stat-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-number" id="totalCount">0</span>
+                            <span class="stat-card-label">إجمالي الطلبات</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-pending">
+                        <div class="stat-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-number" id="pendingCount">0</span>
+                            <span class="stat-card-label">تحت المراجعة</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-approved">
+                        <div class="stat-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-number" id="approvedCount">0</span>
+                            <span class="stat-card-label">معتمد</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-rejected">
+                        <div class="stat-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-number" id="rejectedCount">0</span>
+                            <span class="stat-card-label">مرفوض</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT SUBMISSIONS -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>آخر الطلبات المقدمة</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="recentTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>اسم الشركة</th>
+                                    <th>المدينة</th>
+                                    <th>النشاط</th>
+                                    <th>تاريخ التقديم</th>
+                                    <th>الحالة</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="emptyRecent" style="display:none;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <p>لا توجد طلبات بعد</p>
+                        <small>ستظهر الطلبات هنا بعد تقديمها من صفحة التسجيل</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUPPLIERS PAGE (ALL) -->
+            <div id="page-suppliers" class="page">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>جميع الموردين</h3>
+                        <div class="card-actions">
+                            <div class="search-box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <input type="text" id="searchInput" placeholder="بحث بالاسم أو رقم الطلب...">
+                            </div>
+                            <select id="filterCity" class="filter-select">
+                                <option value="">كل المدن</option>
+                            </select>
+                            <select id="filterActivity" class="filter-select">
+                                <option value="">كل الأنشطة</option>
+                            </select>
+                            <select id="filterStatus" class="filter-select">
+                                <option value="">كل الحالات</option>
+                                <option value="تحت المراجعة">تحت المراجعة</option>
+                                <option value="معتمد">معتمد</option>
+                                <option value="مرفوض">مرفوض</option>
+                            </select>
+                            <button class="btn btn-sm btn-export" onclick="exportCSV()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                                تصدير CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="suppliersTable">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="Supplier_ID">رقم الطلب <span class="sort-icon"></span></th>
+                                    <th class="sortable" data-sort="Company_Name">اسم الشركة <span class="sort-icon"></span></th>
+                                    <th class="sortable" data-sort="City">المدينة <span class="sort-icon"></span></th>
+                                    <th>النشاط</th>
+                                    <th class="sortable" data-sort="Annual_Turnover">حجم الأعمال <span class="sort-icon"></span></th>
+                                    <th>المصنع</th>
+                                    <th>المعدات</th>
+                                    <th class="sortable" data-sort="Submission_Date">تاريخ التقديم <span class="sort-icon"></span></th>
+                                    <th>الحالة</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="suppliersBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="emptySuppliers" style="display:none;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        <p>لا توجد نتائج</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PENDING PAGE -->
+            <div id="page-pending" class="page">
+                <div class="card">
+                    <div class="card-header"><h3>طلبات بانتظار المراجعة</h3></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th><th>اسم الشركة</th><th>المدينة</th><th>النشاط</th><th>تاريخ التقديم</th><th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPROVED PAGE -->
+            <div id="page-approved" class="page">
+                <div class="card">
+                    <div class="card-header"><h3>الموردين المعتمدين</h3></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th><th>اسم الشركة</th><th>المدينة</th><th>النشاط</th><th>التقييم</th><th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvedBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REJECTED PAGE -->
+            <div id="page-rejected" class="page">
+                <div class="card">
+                    <div class="card-header"><h3>الموردين المرفوضين</h3></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th><th>اسم الشركة</th><th>المدينة</th><th>السبب</th><th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rejectedBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ===== DETAIL MODAL ===== -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="modalTitle">تفاصيل المورد</h2>
+                <button class="modal-close" onclick="closeDetail()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
