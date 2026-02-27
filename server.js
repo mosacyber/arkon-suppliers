@@ -7,8 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // PostgreSQL connection
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+var dbUrl = process.env.DATABASE_URL || 'postgresql://admin:KxCOdWFB6D8ijLC9UBD2k1HTFCSlQngd@chalet-db-pugmli:5432/chalet_db';
+var pool = new Pool({
+    connectionString: dbUrl,
     ssl: false
 });
 
@@ -181,10 +182,16 @@ app.get('/api/debug', async function (req, res) {
             connected: true,
             time: r.rows[0].time,
             tables: tables.rows.map(function (t) { return t.tablename; }),
-            dbUrl: process.env.DATABASE_URL ? 'SET (hidden)' : 'NOT SET'
+            dbUrl: dbUrl ? dbUrl.substring(0, 20) + '...' : 'NOT SET',
+            envVar: process.env.DATABASE_URL ? 'FROM ENV' : 'HARDCODED FALLBACK'
         });
     } catch (err) {
-        res.json({ connected: false, error: err.message, dbUrl: process.env.DATABASE_URL ? 'SET' : 'NOT SET' });
+        res.json({
+            connected: false,
+            error: err.message,
+            dbUrl: dbUrl ? dbUrl.substring(0, 20) + '...' : 'NOT SET',
+            envVar: process.env.DATABASE_URL ? 'FROM ENV' : 'HARDCODED FALLBACK'
+        });
     }
 });
 
