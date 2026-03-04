@@ -3,12 +3,19 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // ===== AUTH =====
-    var ADMIN_USER = 'admin';
-    var ADMIN_PASS = 'arkon2026';
-    var isLoggedIn = sessionStorage.getItem('arkon_admin') === 'true';
+    var adminToken = sessionStorage.getItem('arkon_token') || '';
+    var isLoggedIn = !!adminToken;
 
     if (isLoggedIn) {
         showDashboard();
+    }
+
+    // Helper: authenticated fetch
+    function adminFetch(url, options) {
+        options = options || {};
+        options.headers = options.headers || {};
+        options.headers['Authorization'] = 'Bearer ' + adminToken;
+        return fetch(url, options);
     }
 
     // Login form
@@ -19,14 +26,34 @@ document.addEventListener('DOMContentLoaded', function () {
             var user = document.getElementById('adminUser').value;
             var pass = document.getElementById('adminPass').value;
             var errorEl = document.getElementById('loginError');
+            var submitBtn = loginForm.querySelector('button[type="submit"]');
 
-            if (user === ADMIN_USER && pass === ADMIN_PASS) {
-                sessionStorage.setItem('arkon_admin', 'true');
-                showDashboard();
-            } else {
-                errorEl.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
-                document.getElementById('adminPass').value = '';
-            }
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري التحقق...';
+
+            fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.token) {
+                    adminToken = data.token;
+                    sessionStorage.setItem('arkon_token', adminToken);
+                    showDashboard();
+                } else {
+                    errorEl.textContent = data.error || 'اسم المستخدم أو كلمة المرور غير صحيحة';
+                    document.getElementById('adminPass').value = '';
+                }
+            })
+            .catch(function () {
+                errorEl.textContent = 'حدث خطأ في الاتصال، حاول مرة أخرى';
+            })
+            .finally(function () {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'تسجيل الدخول';
+            });
         });
     }
 
@@ -37,8 +64,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.logout = function () {
-        sessionStorage.removeItem('arkon_admin');
+        sessionStorage.removeItem('arkon_token');
+        adminToken = '';
         location.reload();
+    };
+
+    window.closeSidebar = function () {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('show');
     };
 
     // ===== SIDEBAR NAVIGATION =====
@@ -48,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'suppliers': 'جميع الموردين',
         'pending': 'بانتظار المراجعة',
         'approved': 'المعتمدين',
-        'rejected': 'المرفوضين'
+        'rejected': 'المرفوضين',
+        'tasks': 'المهام والتقويم'
     };
 
     navItems.forEach(function (item) {
@@ -66,9 +102,16 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('pageTitle').textContent = pageTitles[page] || '';
 
             // Close mobile sidebar
-            document.querySelector('.sidebar').classList.remove('open');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
 
-            loadData();
+            if (page === 'tasks') {
+                loadTasks();
+            } else {
+                loadData();
+            }
         });
     });
 
@@ -76,7 +119,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var menuToggle = document.getElementById('menuToggle');
     if (menuToggle) {
         menuToggle.addEventListener('click', function () {
-            document.querySelector('.sidebar').classList.toggle('open');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('show');
         });
     }
 
@@ -84,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var cachedSuppliers = [];
 
     function loadData() {
-        fetch('/api/suppliers')
+        adminFetch('/api/suppliers')
             .then(function (res) { return res.json(); })
             .then(function (suppliers) {
                 cachedSuppliers = suppliers;
@@ -590,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.approveSupplier = function (index) {
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+            adminFetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Approval_Status: 'معتمد' })
@@ -604,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (suppliers[index]) {
             var body = { Approval_Status: 'مرفوض' };
             if (reason) body.Notes = reason;
-            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+            adminFetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -617,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!notes) return;
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+            adminFetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Notes: notes.value })
@@ -631,7 +677,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.setRating = function (index, rating) {
         var suppliers = getSuppliers();
         if (suppliers[index]) {
-            fetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
+            adminFetch('/api/suppliers/' + encodeURIComponent(suppliers[index].Supplier_ID), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Rating: rating })
@@ -816,7 +862,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         // Send to server
-        fetch('/api/suppliers/bulk', {
+        adminFetch('/api/suppliers/bulk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(demoSuppliers)
@@ -916,5 +962,297 @@ document.addEventListener('DOMContentLoaded', function () {
         div.appendChild(document.createTextNode(text || ''));
         return div.innerHTML;
     }
+
+    // ===== GOOGLE CALENDAR SETTINGS =====
+
+    window.toggleCalendarSettings = function () {
+        var body = document.getElementById('calendarSettingsBody');
+        var icon = document.getElementById('settingsToggleIcon');
+        if (!body) return;
+        var isOpen = body.style.display !== 'none';
+        body.style.display = isOpen ? 'none' : 'block';
+        if (icon) icon.innerHTML = isOpen ? '&#8964;' : '&#8963;';
+        if (!isOpen) loadCalendarSettings();
+    };
+
+    function loadCalendarSettings() {
+        adminFetch('/api/settings/calendar')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var clientIdEl = document.getElementById('settingsClientId');
+                var redirectEl = document.getElementById('settingsRedirectUri');
+                var connectArea = document.getElementById('calendarConnectArea');
+                if (clientIdEl) clientIdEl.value = data.client_id || '';
+                if (redirectEl) redirectEl.value = data.redirect_uri || '';
+                if (connectArea) {
+                    if (data.client_id && data.has_secret) {
+                        connectArea.innerHTML = checkCalendarStatus._lastConnected
+                            ? '<span style="color:#27ae60;font-weight:600;">&#10003; مرتبط بـ Google Calendar</span>'
+                            : '<button class="btn-action btn-view" style="padding:8px 18px;" onclick="connectCalendar()">ربط Google Calendar</button>';
+                    } else {
+                        connectArea.innerHTML = '<span style="color:#e67e22;font-size:13px;">أضف Client ID و Client Secret أولاً ثم احفظ</span>';
+                    }
+                }
+            })
+            .catch(function () {});
+    }
+
+    window.saveCalendarSettings = function () {
+        var clientId = (document.getElementById('settingsClientId') || {}).value || '';
+        var clientSecret = (document.getElementById('settingsClientSecret') || {}).value || '';
+        var msgEl = document.getElementById('settingsMsg');
+
+        if (!clientId.trim()) {
+            if (msgEl) { msgEl.textContent = 'Client ID مطلوب'; msgEl.style.color = '#e74c3c'; }
+            return;
+        }
+
+        adminFetch('/api/settings/calendar', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ client_id: clientId.trim(), client_secret: clientSecret.trim() || null })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (msgEl) {
+                if (data.success) {
+                    msgEl.textContent = 'تم حفظ الإعدادات بنجاح';
+                    msgEl.style.color = '#27ae60';
+                    if (clientSecret.trim()) {
+                        document.getElementById('settingsClientSecret').value = '';
+                    }
+                    loadCalendarSettings();
+                } else {
+                    msgEl.textContent = data.error || 'حدث خطأ';
+                    msgEl.style.color = '#e74c3c';
+                }
+            }
+            setTimeout(function () { if (msgEl) msgEl.textContent = ''; }, 3000);
+        })
+        .catch(function () {
+            if (msgEl) { msgEl.textContent = 'خطأ في الاتصال'; msgEl.style.color = '#e74c3c'; }
+        });
+    };
+
+    window.copyRedirectUri = function () {
+        var el = document.getElementById('settingsRedirectUri');
+        if (!el) return;
+        navigator.clipboard.writeText(el.value).then(function () {
+            var btn = el.nextElementSibling;
+            if (btn) { btn.textContent = 'تم النسخ ✓'; setTimeout(function () { btn.textContent = 'نسخ'; }, 2000); }
+        }).catch(function () {
+            el.select();
+            document.execCommand('copy');
+        });
+    };
+
+    // ===== TASKS & GOOGLE CALENDAR =====
+
+    // Check calendar status and update UI
+    checkCalendarStatus._lastConnected = false;
+
+    function checkCalendarStatus() {
+        adminFetch('/api/calendar/status')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                checkCalendarStatus._lastConnected = !!data.connected;
+                var statusEl = document.getElementById('calendarStatus');
+                var connectArea = document.getElementById('calendarConnectArea');
+                var connected = data.connected;
+
+                if (statusEl) {
+                    statusEl.innerHTML = connected
+                        ? '<span style="color:#27ae60;font-weight:600;">&#10003; Google Calendar مرتبط</span>'
+                        : '';
+                }
+                if (connectArea && !connected) {
+                    connectArea.innerHTML = '<button class="btn-action btn-view" style="padding:8px 18px;" onclick="connectCalendar()">ربط Google Calendar</button>';
+                } else if (connectArea && connected) {
+                    connectArea.innerHTML = '<span style="color:#27ae60;font-weight:600;">&#10003; مرتبط بـ Google Calendar</span>';
+                }
+            })
+            .catch(function () {});
+    }
+
+    window.connectCalendar = function () {
+        adminFetch('/api/calendar/auth')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert(data.error || 'تعذر بدء الربط');
+                }
+            })
+            .catch(function () { alert('خطأ في الاتصال'); });
+    };
+
+    // Handle cal= query param (redirect back from Google OAuth)
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        var cal = params.get('cal');
+        if (cal === 'success') {
+            alert('تم ربط Google Calendar بنجاح! ستُضاف المهام تلقائياً إلى تقويمك.');
+            history.replaceState({}, '', '/admin');
+        } else if (cal === 'error') {
+            alert('حدث خطأ أثناء ربط Google Calendar. تأكد من بيانات Google API.');
+            history.replaceState({}, '', '/admin');
+        }
+    })();
+
+    // Load tasks
+    var cachedTasks = [];
+
+    function loadTasks() {
+        checkCalendarStatus();
+        adminFetch('/api/tasks')
+            .then(function (r) { return r.json(); })
+            .then(function (tasks) {
+                cachedTasks = tasks;
+                renderTasksTable(tasks);
+            })
+            .catch(function (err) { console.error('Error loading tasks:', err); });
+    }
+
+    function renderTasksTable(tasks) {
+        var body = document.getElementById('tasksBody');
+        var empty = document.getElementById('emptyTasks');
+        if (!body) return;
+
+        if (tasks.length === 0) {
+            body.innerHTML = '';
+            if (empty) empty.style.display = 'block';
+            return;
+        }
+        if (empty) empty.style.display = 'none';
+
+        var statusColors = { 'معلق': 'badge-pending', 'قيد التنفيذ': 'badge-pending', 'مكتمل': 'badge-approved' };
+
+        body.innerHTML = tasks.map(function (t) {
+            var dueDate = t.due_date ? new Date(t.due_date).toLocaleString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+            var calIcon = t.calendar_event_id
+                ? '<span style="color:#27ae60;font-size:18px;" title="مرتبط بـ Google Calendar">&#128197;</span>'
+                : '<span style="color:#bbb;font-size:18px;" title="غير مرتبط">&#128197;</span>';
+            var statusCls = statusColors[t.status] || 'badge-pending';
+
+            return '<tr>' +
+                '<td>' + t.id + '</td>' +
+                '<td><strong>' + escapeHtml(t.title) + '</strong></td>' +
+                '<td>' + escapeHtml(t.description || '-') + '</td>' +
+                '<td>' + dueDate + '</td>' +
+                '<td>' + escapeHtml(t.supplier_id || '-') + '</td>' +
+                '<td><span class="badge ' + statusCls + '">' + escapeHtml(t.status) + '</span></td>' +
+                '<td style="text-align:center;">' + calIcon + '</td>' +
+                '<td>' +
+                    '<button class="btn-action btn-view" onclick="openTaskModal(' + t.id + ')">تعديل</button>' +
+                    '<button class="btn-action btn-reject" onclick="deleteTask(' + t.id + ')">حذف</button>' +
+                '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    // Populate suppliers in task modal
+    function populateTaskSuppliers() {
+        var sel = document.getElementById('taskSupplier');
+        if (!sel) return;
+        var current = sel.value;
+        sel.innerHTML = '<option value="">— بدون مورد —</option>';
+        cachedSuppliers.forEach(function (s) {
+            sel.innerHTML += '<option value="' + escapeHtml(s.Supplier_ID) + '">' + escapeHtml(s.Company_Name) + ' (' + escapeHtml(s.Supplier_ID) + ')</option>';
+        });
+        sel.value = current;
+    }
+
+    window.openTaskModal = function (id) {
+        document.getElementById('taskId').value = '';
+        document.getElementById('taskTitle').value = '';
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('taskDueDate').value = '';
+        document.getElementById('taskStatus').value = 'معلق';
+        document.getElementById('taskError').textContent = '';
+        document.getElementById('taskModalTitle').textContent = 'إضافة مهمة';
+        populateTaskSuppliers();
+
+        if (id) {
+            var task = cachedTasks.find(function (t) { return t.id === id; });
+            if (task) {
+                document.getElementById('taskModalTitle').textContent = 'تعديل المهمة';
+                document.getElementById('taskId').value = task.id;
+                document.getElementById('taskTitle').value = task.title;
+                document.getElementById('taskDesc').value = task.description || '';
+                // Format datetime-local value
+                var d = new Date(task.due_date);
+                var local = d.getFullYear() + '-' +
+                    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(d.getDate()).padStart(2, '0') + 'T' +
+                    String(d.getHours()).padStart(2, '0') + ':' +
+                    String(d.getMinutes()).padStart(2, '0');
+                document.getElementById('taskDueDate').value = local;
+                document.getElementById('taskStatus').value = task.status || 'معلق';
+                document.getElementById('taskSupplier').value = task.supplier_id || '';
+            }
+        }
+
+        document.getElementById('taskModal').classList.add('show');
+    };
+
+    window.closeTaskModal = function () {
+        document.getElementById('taskModal').classList.remove('show');
+    };
+
+    var taskModalEl = document.getElementById('taskModal');
+    if (taskModalEl) {
+        taskModalEl.addEventListener('click', function (e) {
+            if (e.target === this) closeTaskModal();
+        });
+    }
+
+    window.saveTask = function () {
+        var id = document.getElementById('taskId').value;
+        var title = document.getElementById('taskTitle').value.trim();
+        var desc = document.getElementById('taskDesc').value.trim();
+        var dueDate = document.getElementById('taskDueDate').value;
+        var status = document.getElementById('taskStatus').value;
+        var supplierId = document.getElementById('taskSupplier').value;
+        var errorEl = document.getElementById('taskError');
+
+        errorEl.textContent = '';
+        if (!title) { errorEl.textContent = 'العنوان مطلوب'; return; }
+        if (!dueDate) { errorEl.textContent = 'تاريخ الاستحقاق مطلوب'; return; }
+
+        var body = {
+            title: title,
+            description: desc || null,
+            due_date: new Date(dueDate).toISOString(),
+            status: status,
+            supplier_id: supplierId || null
+        };
+
+        var method = id ? 'PUT' : 'POST';
+        var url = id ? '/api/tasks/' + id : '/api/tasks';
+
+        adminFetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.success || data.id) {
+                closeTaskModal();
+                loadTasks();
+            } else {
+                errorEl.textContent = data.error || 'حدث خطأ';
+            }
+        })
+        .catch(function () { errorEl.textContent = 'خطأ في الاتصال'; });
+    };
+
+    window.deleteTask = function (id) {
+        if (!confirm('هل تريد حذف هذه المهمة وإزالتها من Google Calendar؟')) return;
+        adminFetch('/api/tasks/' + id, { method: 'DELETE' })
+            .then(function () { loadTasks(); })
+            .catch(function () { alert('خطأ في حذف المهمة'); });
+    };
 
 });

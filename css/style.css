@@ -438,9 +438,19 @@ body {
     padding: 40px 0 80px;
 }
 
+.form-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 .form-step {
     display: none;
     animation: fadeInUp 0.4s ease;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
 }
 
 .form-step.active {
@@ -589,7 +599,7 @@ body {
 /* ===== ACTIVITY CARDS ===== */
 .activity-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 24px;
 }
@@ -1187,6 +1197,139 @@ body {
     to { transform: rotate(360deg); }
 }
 
+/* ===== HELP WIDGET ===== */
+.help-btn {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: var(--primary-dark);
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 900;
+    font-family: 'Tajawal', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(200, 169, 81, 0.45);
+    z-index: 900;
+    transition: var(--transition);
+}
+
+.help-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 28px rgba(200, 169, 81, 0.55);
+}
+
+.help-panel {
+    position: fixed;
+    bottom: 92px;
+    left: 28px;
+    width: 320px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border);
+    z-index: 900;
+    display: none;
+    animation: fadeInUp 0.25s ease;
+    overflow: hidden;
+}
+
+.help-panel.show {
+    display: block;
+}
+
+.help-panel-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: var(--white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.help-panel-header h4 {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.help-panel-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 4px;
+    transition: var(--transition);
+}
+
+.help-panel-close:hover {
+    color: var(--white);
+}
+
+.help-panel-body {
+    padding: 16px 20px;
+}
+
+.help-step {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: flex-start;
+}
+
+.help-step:last-child {
+    border-bottom: none;
+}
+
+.help-step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(15, 76, 129, 0.1);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.help-step-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.help-step-text strong {
+    color: var(--primary);
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+@media (max-width: 480px) {
+    .help-panel {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        bottom: 84px;
+    }
+    .help-btn {
+        bottom: 20px;
+        left: 20px;
+    }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .progress-steps {
@@ -1211,6 +1354,10 @@ body {
 
     .stat-number {
         font-size: 28px;
+    }
+
+    .form-step {
+        padding: 24px;
     }
 
     .form-grid {
@@ -1271,6 +1418,11 @@ body {
 @media (max-width: 480px) {
     .container {
         padding: 0 16px;
+    }
+
+    .form-step {
+        padding: 20px 16px;
+        border-radius: var(--radius);
     }
 
     .activity-grid {

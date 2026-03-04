@@ -40,8 +40,11 @@
     <!-- ===== ADMIN DASHBOARD ===== -->
     <div id="dashboard" class="dashboard" style="display:none;">
 
+        <!-- SIDEBAR OVERLAY -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
         <!-- SIDEBAR -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-icon-sm">A</div>
                 <div>
@@ -69,6 +72,10 @@
                 <a href="#" class="nav-item" data-page="rejected">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                     المرفوضين
+                </a>
+                <a href="#" class="nav-item" data-page="tasks">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    المهام والتقويم
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -274,6 +281,82 @@
                 </div>
             </div>
 
+            <!-- TASKS PAGE -->
+            <div id="page-tasks" class="page">
+
+                <!-- Google Calendar Settings Card -->
+                <div class="card" id="calendarSettingsCard" style="margin-bottom:20px;">
+                    <div class="card-header" style="cursor:pointer;" onclick="toggleCalendarSettings()">
+                        <h3 style="display:flex;align-items:center;gap:10px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/></svg>
+                            إعدادات Google Calendar
+                        </h3>
+                        <span id="settingsToggleIcon" style="font-size:18px;color:#888;">&#8964;</span>
+                    </div>
+                    <div id="calendarSettingsBody" style="display:none;padding:16px 20px;border-top:1px solid #f0f0f0;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                            <div>
+                                <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Client ID</label>
+                                <input type="text" id="settingsClientId" class="notes-input" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;font-family:monospace;font-size:12px;" placeholder="...apps.googleusercontent.com">
+                            </div>
+                            <div>
+                                <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Client Secret <span style="font-weight:400;color:#888;">(اتركه فارغاً للإبقاء على القيمة الحالية)</span></label>
+                                <input type="password" id="settingsClientSecret" class="notes-input" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;font-family:monospace;font-size:12px;" placeholder="GOCSPX-...">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Redirect URI (للنسخ في Google Console)</label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="text" id="settingsRedirectUri" readonly class="notes-input" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;font-family:monospace;font-size:12px;background:#f8fafc;color:#555;">
+                                <button class="btn-action btn-view" style="white-space:nowrap;padding:8px 14px;" onclick="copyRedirectUri()">نسخ</button>
+                            </div>
+                        </div>
+                        <div id="settingsMsg" style="font-size:13px;margin-bottom:10px;"></div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <button class="btn-action btn-approve" style="padding:8px 20px;" onclick="saveCalendarSettings()">حفظ الإعدادات</button>
+                            <div id="calendarConnectArea"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Calendar connection banner -->
+                <div id="calendarBanner" style="display:none;margin-bottom:20px;padding:14px 18px;border-radius:10px;display:flex;align-items:center;gap:12px;font-size:14px;">
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>المهام</h3>
+                        <div class="card-actions">
+                            <div id="calendarStatus" style="font-size:13px;display:flex;align-items:center;gap:8px;"></div>
+                            <button class="btn-action btn-approve" style="padding:8px 16px;" onclick="openTaskModal()">+ إضافة مهمة</button>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="tasksTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>العنوان</th>
+                                    <th>الوصف</th>
+                                    <th>تاريخ الاستحقاق</th>
+                                    <th>المورد</th>
+                                    <th>الحالة</th>
+                                    <th>Google Calendar</th>
+                                    <th>إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasksBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="emptyTasks" style="display:none;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <p>لا توجد مهام بعد</p>
+                        <small>أضف مهمة جديدة لتظهر هنا وتُزامن تلقائياً مع Google Calendar</small>
+                    </div>
+                </div>
+            </div>
+
             <!-- REJECTED PAGE -->
             <div id="page-rejected" class="page">
                 <div class="card">
@@ -294,6 +377,50 @@
         </main>
     </div>
 
+    <!-- ===== TASK MODAL ===== -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h2 id="taskModalTitle">إضافة مهمة</h2>
+                <button class="modal-close" onclick="closeTaskModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="taskId">
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">العنوان <span style="color:#e74c3c">*</span></label>
+                    <input type="text" id="taskTitle" class="notes-input" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;" placeholder="عنوان المهمة...">
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">الوصف</label>
+                    <textarea id="taskDesc" class="notes-input" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;" placeholder="وصف المهمة (اختياري)..."></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">تاريخ ووقت الاستحقاق <span style="color:#e74c3c">*</span></label>
+                    <input type="datetime-local" id="taskDueDate" class="notes-input" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;">
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">الحالة</label>
+                    <select id="taskStatus" class="filter-select" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;">
+                        <option value="معلق">معلق</option>
+                        <option value="قيد التنفيذ">قيد التنفيذ</option>
+                        <option value="مكتمل">مكتمل</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
+                    <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">المورد المرتبط (اختياري)</label>
+                    <select id="taskSupplier" class="filter-select" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e2e8f0;">
+                        <option value="">— بدون مورد —</option>
+                    </select>
+                </div>
+                <div id="taskError" style="color:#e74c3c;font-size:13px;margin-top:4px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-action btn-approve" onclick="saveTask()" style="min-width:120px;">حفظ المهمة</button>
+                <button class="btn-action btn-view" onclick="closeTaskModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== DETAIL MODAL ===== -->
     <div class="modal-overlay" id="detailModal">
         <div class="modal-content modal-large">
@@ -307,5 +434,68 @@
     </div>
 
     <script src="js/admin.js"></script>
+
+    <!-- ===== HELP WIDGET ===== -->
+    <button class="help-btn" id="helpBtn" title="دليل الإدارة">?</button>
+
+    <div class="help-panel" id="helpPanel">
+        <div class="help-panel-header">
+            <h4>دليل لوحة الإدارة</h4>
+            <button class="help-panel-close" onclick="document.getElementById('helpPanel').classList.remove('show')">×</button>
+        </div>
+        <div class="help-panel-body">
+            <div class="help-step">
+                <div class="help-step-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="help-step-text">
+                    <strong>نظرة عامة</strong>
+                    مؤشرات الأداء الرئيسية وآخر الطلبات المقدمة
+                </div>
+            </div>
+            <div class="help-step">
+                <div class="help-step-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+                <div class="help-step-text">
+                    <strong>الموردين</strong>
+                    عرض وفلترة وتصدير CSV لجميع الموردين
+                </div>
+            </div>
+            <div class="help-step">
+                <div class="help-step-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="help-step-text">
+                    <strong>بانتظار المراجعة</strong>
+                    اضغط "عرض" على أي طلب لاعتماده أو رفضه
+                </div>
+            </div>
+            <div class="help-step">
+                <div class="help-step-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="help-step-text">
+                    <strong>المعتمدون</strong>
+                    قيّم الموردين المعتمدين بنظام النجوم (1-5)
+                </div>
+            </div>
+            <div class="help-step">
+                <div class="help-step-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="help-step-text">
+                    <strong>المهام والتقويم</strong>
+                    أضف مهام واربطها بتقويم جوجل للمتابعة
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('helpBtn').addEventListener('click', function () {
+            document.getElementById('helpPanel').classList.toggle('show');
+        });
+    </script>
 </body>
 </html>

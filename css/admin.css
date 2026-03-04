@@ -869,6 +869,150 @@ body {
     background: var(--primary-dark);
 }
 
+/* ===== HELP WIDGET ===== */
+.help-btn {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #e0c96a);
+    color: var(--primary-dark);
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 900;
+    font-family: 'Tajawal', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(200, 169, 81, 0.45);
+    z-index: 200;
+    transition: all 0.3s ease;
+}
+
+.help-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 28px rgba(200, 169, 81, 0.55);
+}
+
+.help-panel {
+    position: fixed;
+    bottom: 92px;
+    left: 28px;
+    width: 320px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    border: 1px solid var(--border);
+    z-index: 200;
+    display: none;
+    overflow: hidden;
+}
+
+.help-panel.show {
+    display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+.help-panel-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: var(--white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.help-panel-header h4 {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.help-panel-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0 4px;
+    transition: all 0.3s ease;
+}
+
+.help-panel-close:hover {
+    color: var(--white);
+}
+
+.help-panel-body {
+    padding: 16px 20px;
+}
+
+.help-step {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+}
+
+.help-step:last-child {
+    border-bottom: none;
+}
+
+.help-step-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: rgba(15, 76, 129, 0.08);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.help-step-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.help-step-text strong {
+    color: var(--primary);
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+@media (max-width: 480px) {
+    .help-panel {
+        left: 16px;
+        right: 16px;
+        width: auto;
+        bottom: 84px;
+    }
+    .help-btn {
+        bottom: 20px;
+        left: 20px;
+    }
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .stats-grid {
@@ -894,11 +1038,30 @@ body {
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-card-icon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .stat-card-number {
+        font-size: 24px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .card-actions {
         width: 100%;
+        flex-wrap: wrap;
     }
 
     .search-box {
@@ -909,11 +1072,48 @@ body {
         width: 100%;
     }
 
+    .filter-select {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .data-table td {
+        font-size: 12px;
+        padding: 10px 8px;
+    }
+
+    .data-table th {
+        font-size: 11px;
+        padding: 10px 8px;
+    }
+
+    .modal-large {
+        max-width: calc(100vw - 32px);
+    }
+
     .detail-grid {
         grid-template-columns: 1fr;
     }
 
     .modal-footer {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page {
+        padding: 16px;
+    }
+
+    .topbar {
+        padding: 0 16px;
+    }
+
+    .topbar-right h2 {
+        font-size: 16px;
     }
 }
